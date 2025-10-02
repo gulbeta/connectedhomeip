@@ -2179,6 +2179,25 @@
           "enabled": 1
         },
         {
+          "name": "Humidistat",
+          "code": 517,
+          "mfgCode": null,
+          "define": "HUMIDISTAT_CLUSTER",
+          "side": "client",
+          "enabled": 1,
+          "apiMaturity": "provisional",
+          "commands": [
+            {
+              "name": "SetSettings",
+              "code": 0,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
+            }
+          ]
+        },
+        {
           "name": "Color Control",
           "code": 768,
           "mfgCode": null,
@@ -3008,6 +3027,7 @@
           "define": "COMMODITY_TARIFF_CLUSTER",
           "side": "client",
           "enabled": 1,
+          "apiMaturity": "provisional",
           "commands": [
             {
               "name": "GetTariffComponentResponse",
