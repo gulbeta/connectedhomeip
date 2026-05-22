@@ -119,6 +119,10 @@ _available_devices = [
     "NETWORK_INFRASTRUCTURE_MANAGER",
   ],
   [
+    "humidifier-dehumidifier",
+    "HUMIDIFIER_DEHUMIDIFIER",
+  ],
+  [
     "occupancy-sensor",
     "OCCUPANCY_SENSOR",
   ],

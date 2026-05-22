@@ -61,6 +61,7 @@ _ALL_DEVICES_APP_DEVICES = [
     'light-sensor',
     'mounted-dimmable-load-control',
     'mounted-on-off-control',
+    'humidifier-dehumidifier',
     'occupancy-sensor',
     'on-off-light',
     'on-off-light-switch',
