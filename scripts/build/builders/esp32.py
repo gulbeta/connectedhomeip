@@ -189,9 +189,10 @@ class Esp32Builder(Builder):
                 "Incompatible app/board combination: %r and %r", app, board)
 
     def _IdfEnvExecute(self, cmd, title=None):
-        # Run activate.sh after export.sh to ensure using the chip environment.
+        # Source CHIP env first, then export ESP-IDF env so idf.py uses ESP-IDF's
+        # python environment (contains esp_idf_monitor and other IDF deps).
         self._Execute(
-            ['bash', '-c', 'source $IDF_PATH/export.sh; source scripts/activate.sh; %s' % cmd],
+            ['bash', '-c', 'source scripts/activate.sh; source $IDF_PATH/export.sh; %s' % cmd],
             title=title)
 
     @property

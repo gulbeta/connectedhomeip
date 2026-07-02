@@ -22,7 +22,7 @@
 #include <devices/boolean-state-sensor/BooleanStateSensorDevice.h>
 #include <devices/chime/ChimeDevice.h>
 #include <devices/dimmable-light/impl/LoggingDimmableLightDevice.h>
-#include <devices/humidifier-dehumidifier/HumidifierDehumidifierDevice.h>
+#include <devices/humidifier-dehumidifier/impl/SimulatingHumidifierDehumidifierDevice.h>
 #include <devices/occupancy-sensor/impl/TogglingOccupancySensorDevice.h>
 #include <devices/on-off-light/LoggingOnOffLightDevice.h>
 #include <devices/proximity-ranger/ProximityRangerDevice.h>
@@ -154,27 +154,8 @@ private:
         }
         if constexpr (ALL_DEVICES_ENABLE_HUMIDIFIER_DEHUMIDIFIER)
         {
-            RegisterCreator("humidifier-dehumidifier", [this]() {
-                VerifyOrDie(mContext.has_value());
-
-                const BitFlags<Clusters::Humidistat::Feature> features{ Clusters::Humidistat::Feature::kHumidifier,
-                                                                         Clusters::Humidistat::Feature::kSensor,
-                                                                         Clusters::Humidistat::Feature::kColdMist };
-                Clusters::HumidistatCluster::OptionalAttributeSet optionalAttributes{ 0 };
-
-                Clusters::HumidistatCluster::StartupConfiguration humidistatConfig;
-                humidistatConfig.mode           = Clusters::Humidistat::ModeEnum::kHumidifier;
-                humidistatConfig.systemState    = Clusters::Humidistat::SystemStateEnum::kHumidifying;
-                humidistatConfig.userSetpoint   = 40;
-                humidistatConfig.targetSetpoint = 40;
-                humidistatConfig.mistType.Set(Clusters::Humidistat::MistTypeBitmap::kMistCold);
-
-                Clusters::RelativeHumidityMeasurementCluster::Config humidityConfig;
-                humidityConfig.minMeasuredValue = 40;
-                humidityConfig.maxMeasuredValue = 60;
-
-                return std::make_unique<HumidifierDehumidifierDevice>(mContext->timerDelegate, features, optionalAttributes,
-                                                                       humidistatConfig, humidityConfig);
+            RegisterCreator("humidifier-dehumidifier", []() {
+                return std::make_unique<SimulatingHumidifierDehumidifierDevice>();
             });
         }
         if constexpr (ALL_DEVICES_ENABLE_ON_OFF_LIGHT)

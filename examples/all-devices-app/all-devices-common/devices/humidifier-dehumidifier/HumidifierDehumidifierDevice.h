@@ -38,6 +38,12 @@ public:
                         EndpointId parentId = kInvalidEndpointId) override;
     void Unregister(CodeDrivenDataModelProvider & provider) override;
 
+    Clusters::HumidistatCluster & HumidistatCluster() { return mHumidistatCluster.Cluster(); }
+    Clusters::RelativeHumidityMeasurementCluster & RelativeHumidityMeasurementCluster()
+    {
+        return mRelativeHumidityMeasurementCluster.Cluster();
+    }
+
 protected:
     TimerDelegate & mTimerDelegate;
     const BitFlags<Clusters::Humidistat::Feature> mFeatures;
