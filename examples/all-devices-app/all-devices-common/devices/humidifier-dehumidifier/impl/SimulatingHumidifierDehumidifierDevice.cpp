@@ -15,6 +15,7 @@
  *    limitations under the License.
  */
 #include "SimulatingHumidifierDehumidifierDevice.h"
+#include <app/server/Server.h>
 #include <lib/support/CodeUtils.h>
 #include <lib/support/logging/CHIPLogging.h>
 
@@ -29,6 +30,15 @@ namespace app {
 namespace {
 
 constexpr System::Clock::Seconds16 kSimulationTickIntervalSec = System::Clock::Seconds16(5);
+
+// Test Event Trigger IDs for Humidistat (cluster 0x0205).
+constexpr uint64_t kHumidistatLowHumidityTrigger  = 0x0205000000000000ULL;
+constexpr uint64_t kHumidistatHighHumidityTrigger = 0x0205000000000001ULL;
+
+SimulatingHumidifierDehumidifierDevice * sActiveHumidistatTriggerDevice = nullptr;
+
+constexpr uint16_t kLowHumidityForTestTrigger  = 3000; // 30.00 % RH
+constexpr uint16_t kHighHumidityForTestTrigger = 7000; // 70.00 % RH
 
 // Step size per tick: 200 units == 2.00 % RH.
 constexpr uint16_t kHumidityStepPerTick = 200;
@@ -119,6 +129,9 @@ SimulatingHumidifierDehumidifierDevice::~SimulatingHumidifierDehumidifierDevice(
 CHIP_ERROR SimulatingHumidifierDehumidifierDevice::Register(EndpointId endpoint, CodeDrivenDataModelProvider & provider,
                                                             EndpointComposition composition)
 {
+    VerifyOrReturnError(sActiveHumidistatTriggerDevice == nullptr || sActiveHumidistatTriggerDevice == this,
+                        CHIP_ERROR_INCORRECT_STATE);
+
     ReturnErrorOnFailure(HumidifierDehumidifierDevice::Register(endpoint, provider, composition));
 
     // Wire up the delegate so attribute changes call back into this class.
@@ -130,17 +143,70 @@ CHIP_ERROR SimulatingHumidifierDehumidifierDevice::Register(EndpointId endpoint,
     LogErrorOnFailure(RelativeHumidityMeasurementCluster().SetMeasuredValue(initialHumidity));
 
     // Kick off the periodic simulation loop.
-    return mTimerDelegate.StartTimer(this, kSimulationTickIntervalSec);
+    ReturnErrorOnFailure(mTimerDelegate.StartTimer(this, kSimulationTickIntervalSec));
+
+    if (auto * triggerDelegate = Server::GetInstance().GetTestEventTriggerDelegate(); triggerDelegate != nullptr)
+    {
+        ReturnErrorOnFailure(triggerDelegate->AddHandler(&mTestEventTriggerHandler));
+        sActiveHumidistatTriggerDevice = this;
+    }
+
+    return CHIP_NO_ERROR;
 }
 
 void SimulatingHumidifierDehumidifierDevice::Unregister(CodeDrivenDataModelProvider & provider)
 {
     mTimerDelegate.CancelTimer(this);
+    if (auto * triggerDelegate = Server::GetInstance().GetTestEventTriggerDelegate(); triggerDelegate != nullptr)
+    {
+        triggerDelegate->RemoveHandler(&mTestEventTriggerHandler);
+    }
+    if (sActiveHumidistatTriggerDevice == this)
+    {
+        sActiveHumidistatTriggerDevice = nullptr;
+    }
     if (mHumidistatCluster.IsConstructed())
     {
         mHumidistatCluster.Cluster().SetDelegate(nullptr);
     }
     HumidifierDehumidifierDevice::Unregister(provider);
+}
+
+CHIP_ERROR SimulatingHumidifierDehumidifierDevice::HandleHumidistatTestEventTriggerInternal(uint64_t eventTrigger)
+{
+    if (!mHumidistatCluster.IsConstructed() || !mRelativeHumidityMeasurementCluster.IsConstructed() || mEndpointId == kInvalidEndpointId)
+    {
+        return CHIP_ERROR_INCORRECT_STATE;
+    }
+
+    if (eventTrigger == kHumidistatLowHumidityTrigger)
+    {
+        TriggerLowHumidityEvent();
+        return CHIP_NO_ERROR;
+    }
+    if (eventTrigger == kHumidistatHighHumidityTrigger)
+    {
+        TriggerHighHumidityEvent();
+        return CHIP_NO_ERROR;
+    }
+
+    return CHIP_ERROR_INVALID_ARGUMENT;
+}
+
+void SimulatingHumidifierDehumidifierDevice::TriggerLowHumidityEvent()
+{
+    ChipLogProgress(AppServer, "SimulatingHumidifierDehumidifier: test trigger LowHumidity (0x%016llX)",
+                    static_cast<unsigned long long>(kHumidistatLowHumidityTrigger));
+    mSimulatedHumidity = kLowHumidityForTestTrigger;
+    RunSimulationStep();
+}
+
+void SimulatingHumidifierDehumidifierDevice::TriggerHighHumidityEvent()
+{
+    ChipLogProgress(AppServer, "SimulatingHumidifierDehumidifier: test trigger HighHumidity (0x%016llX)",
+                    static_cast<unsigned long long>(kHumidistatHighHumidityTrigger));
+    mSimulatedHumidity = kHighHumidityForTestTrigger;
+    RunSimulationStep();
 }
 
 // ---------------------------------------------------------------------------
@@ -339,5 +405,16 @@ void SimulatingHumidifierDehumidifierDevice::OnOptimalChanged(bool newOptimal)
     ChipLogProgress(AppServer, "SimulatingHumidifierDehumidifier: optimal mode %s", newOptimal ? "enabled" : "disabled");
 }
 
+bool HandleHumidistatTestEventTriggerForApp(uint64_t eventTrigger)
+{
+    VerifyOrReturnValue(sActiveHumidistatTriggerDevice != nullptr, false);
+    return sActiveHumidistatTriggerDevice->HandleHumidistatTestEventTriggerInternal(eventTrigger) == CHIP_NO_ERROR;
+}
+
 } // namespace app
 } // namespace chip
+
+bool HandleHumidistatTestEventTrigger(uint64_t eventTrigger)
+{
+    return chip::app::HandleHumidistatTestEventTriggerForApp(eventTrigger);
+}

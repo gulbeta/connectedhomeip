@@ -2,6 +2,20 @@
 
 Simulated Humidifier / Dehumidifier device for the `all-devices-app`.
 
+## Test Event Triggers (Certification)
+
+The device supports Humidistat certification test event triggers via
+General Diagnostics `TestEventTrigger`:
+
+| Triggered Event | EventTrigger ID |
+|---|---|
+| LowHumidity Event | `0x0205_XXXX_0000_0000` |
+| HighHumidity Event | `0x0205_XXXX_0000_0001` |
+
+`XXXX` is the endpoint in hex (as defined by the certification trigger format).
+The cluster trigger handler clears endpoint bits before dispatch, matching the
+standard test-event-trigger handler pattern used by other clusters.
+
 ## Mode State Transitions
 
 The simulation loop runs every 5 seconds and advances `mSimulatedHumidity`

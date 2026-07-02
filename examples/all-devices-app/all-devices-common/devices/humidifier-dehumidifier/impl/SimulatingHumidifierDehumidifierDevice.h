@@ -17,6 +17,7 @@
 #pragma once
 
 #include <app/clusters/humidistat-server/HumidistatCluster.h>
+#include <app/clusters/humidistat-server/HumidistatTestEventTriggerHandler.h>
 #include <data-model-providers/codedriven/CodeDrivenDataModelProvider.h>
 #include <devices/humidifier-dehumidifier/HumidifierDehumidifierDevice.h>
 #include <platform/DefaultTimerDelegate.h>
@@ -58,10 +59,15 @@ public:
     void OnSleepChanged(bool newSleep) override;
     void OnOptimalChanged(bool newOptimal) override;
 
+    CHIP_ERROR HandleHumidistatTestEventTriggerInternal(uint64_t eventTrigger);
+
 private:
+    void TriggerLowHumidityEvent();
+    void TriggerHighHumidityEvent();
     void RunSimulationStep();
 
     DefaultTimerDelegate mTimerDelegate;
+    chip::HumidistatTestEventTriggerHandler mTestEventTriggerHandler;
 
     // Simulated humidity in 0.01 % units (0–10000), i.e. 3000 == 30.00 % RH.
     uint16_t mSimulatedHumidity;
