@@ -37,8 +37,8 @@ Relevant cluster implementations:
 
 Update:
 
-- `examples/all-devices-app/all-devices-common/devices/device-factory/DeviceFactory.h`
-- `examples/all-devices-app/all-devices-common/devices/device-factory/BUILD.gn`
+- `examples/all-devices-app/all-devices-common/device-factory/DeviceFactory.h`
+- `examples/all-devices-app/all-devices-common/device-factory/BUILD.gn`
 
 Changes:
 
@@ -51,9 +51,9 @@ Changes:
 
 Update all three files in lockstep:
 
-- `examples/all-devices-app/all-devices-common/devices/enabled_devices.gni`
-- `examples/all-devices-app/all-devices-common/devices/enabled_devices.cmake`
-- `examples/all-devices-app/all-devices-common/devices/enabled_devices_config.h.in`
+- `examples/all-devices-app/all-devices-common/device-factory/enabled_devices.gni`
+- `examples/all-devices-app/all-devices-common/device-factory/enabled_devices.cmake`
+- `examples/all-devices-app/all-devices-common/device-factory/enabled_devices_config.h.in`
 
 Required changes:
 

@@ -17,6 +17,7 @@
 
 #include <devices/Types.h>
 #include <devices/humidifier-dehumidifier/HumidifierDehumidifierDevice.h>
+#include <lib/support/CodeUtils.h>
 #include <lib/support/logging/CHIPLogging.h>
 
 namespace chip {
@@ -33,9 +34,12 @@ HumidifierDehumidifierDevice::HumidifierDehumidifierDevice(
 {}
 
 CHIP_ERROR HumidifierDehumidifierDevice::Register(EndpointId endpoint, CodeDrivenDataModelProvider & provider,
-                                                  EndpointId parentId)
+                                                  EndpointComposition composition)
 {
-    ReturnErrorOnFailure(SingleEndpointRegistration(endpoint, provider, parentId));
+    VerifyOrReturnError(mEndpointId == kInvalidEndpointId, CHIP_ERROR_INCORRECT_STATE);
+    DeviceRegistrationTransaction transaction(*this, provider);
+
+    ReturnErrorOnFailure(RegisterDescriptor(endpoint, provider, composition));
 
     mIdentifyCluster.Create(Clusters::IdentifyCluster::Config(endpoint, mTimerDelegate));
     ReturnErrorOnFailure(provider.AddCluster(mIdentifyCluster.Registration()));
@@ -46,12 +50,14 @@ CHIP_ERROR HumidifierDehumidifierDevice::Register(EndpointId endpoint, CodeDrive
     mRelativeHumidityMeasurementCluster.Create(endpoint, mHumidityConfig);
     ReturnErrorOnFailure(provider.AddCluster(mRelativeHumidityMeasurementCluster.Registration()));
 
-    return provider.AddEndpoint(mEndpointRegistration);
+    ReturnErrorOnFailure(provider.AddEndpoint(mEndpointRegistration));
+    transaction.Commit();
+    return CHIP_NO_ERROR;
 }
 
 void HumidifierDehumidifierDevice::Unregister(CodeDrivenDataModelProvider & provider)
 {
-    SingleEndpointUnregistration(provider);
+    UnregisterDescriptor(provider);
     if (mRelativeHumidityMeasurementCluster.IsConstructed())
     {
         LogErrorOnFailure(provider.RemoveCluster(&mRelativeHumidityMeasurementCluster.Cluster()));

@@ -33,6 +33,7 @@
 #include <devices/fan/impl/LoggingFanDevice.h>
 #include <devices/flow-sensor/impl/IncreasingFlowSensorDevice.h>
 #include <devices/generic-switch/GenericSwitchDevice.h>
+#include <devices/humidifier-dehumidifier/impl/SimulatingHumidifierDehumidifierDevice.h>
 #include <devices/humidity-sensor/impl/IncreasingHumiditySensorDevice.h>
 #include <devices/light-sensor/impl/IncreasingLightSensorDevice.h>
 #include <devices/mounted-dimmable-load-control/MountedDimmableLoadControlDevice.h>
@@ -488,6 +489,12 @@ private:
             RegisterCreator("humidity-sensor", [this]() {
                 VerifyOrDie(mContext.has_value());
                 return std::make_unique<IncreasingHumiditySensorDevice>(mContext->timerDelegate);
+            });
+        }
+        if constexpr (ALL_DEVICES_ENABLE_HUMIDIFIER_DEHUMIDIFIER)
+        {
+            RegisterCreator("humidifier-dehumidifier", []() {
+                return std::make_unique<SimulatingHumidifierDehumidifierDevice>();
             });
         }
         if constexpr (ALL_DEVICES_ENABLE_LIGHT_SENSOR)

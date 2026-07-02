@@ -20,3 +20,4 @@ rm -f examples/lighting-app/esp32/sdkconfig
 bash -c 'source scripts/activate.sh; source $IDF_PATH/export.sh; 
 export SDKCONFIG_DEFAULTS={out}/esp32-devkitc-light-rpc/sdkconfig.defaults
 idf.py -C examples/lighting-app/esp32 -B {out}/esp32-devkitc-light-rpc build'
+

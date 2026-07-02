@@ -56,6 +56,8 @@ set(ALL_DEVICES_DEVICE_SOURCES
     "${ALL_DEVICES_COMMON_DIR}/devices/flow-sensor/FlowSensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/flow-sensor/impl/IncreasingFlowSensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/generic-switch/GenericSwitchDevice.cpp"
+    "${ALL_DEVICES_COMMON_DIR}/devices/humidifier-dehumidifier/HumidifierDehumidifierDevice.cpp"
+    "${ALL_DEVICES_COMMON_DIR}/devices/humidifier-dehumidifier/impl/SimulatingHumidifierDehumidifierDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/humidity-sensor/HumiditySensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/humidity-sensor/impl/IncreasingHumiditySensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/light-sensor/LightSensorDevice.cpp"
@@ -63,10 +65,6 @@ set(ALL_DEVICES_DEVICE_SOURCES
     "${ALL_DEVICES_COMMON_DIR}/devices/mounted-dimmable-load-control/MountedDimmableLoadControlDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/mounted-on-off-control/MountedOnOffControlDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/network-infrastructure-manager/NetworkInfrastructureManagerDevice.cpp"
-    "${ALL_DEVICES_COMMON_DIR}/devices/humidifier-dehumidifier/HumidifierDehumidifierDevice.cpp"
-    "${ALL_DEVICES_COMMON_DIR}/devices/humidifier-dehumidifier/impl/SimulatingHumidifierDehumidifierDevice.cpp"
-    "${ALL_DEVICES_COMMON_DIR}/devices/interface/DeviceInterface.cpp"
-    "${ALL_DEVICES_COMMON_DIR}/devices/interface/SingleEndpointDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/occupancy-sensor/OccupancySensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/occupancy-sensor/impl/LoggingOccupancySensorDevice.cpp"
     "${ALL_DEVICES_COMMON_DIR}/devices/on-off-light/impl/LoggingOnOffLightDevice.cpp"
@@ -162,12 +160,12 @@ foreach(_key
         fan
         flow-sensor
         generic-switch
+        humidifier-dehumidifier
         humidity-sensor
         light-sensor
         mounted-dimmable-load-control
         mounted-on-off-control
         network-infrastructure-manager
-        humidifier-dehumidifier
         occupancy-sensor
         on-off-light
         on-off-light-switch

@@ -99,6 +99,10 @@ _available_devices = [
     "GENERIC_SWITCH",
   ],
   [
+    "humidifier-dehumidifier",
+    "HUMIDIFIER_DEHUMIDIFIER",
+  ],
+  [
     "humidity-sensor",
     "HUMIDITY_SENSOR",
   ],
@@ -117,10 +121,6 @@ _available_devices = [
   [
     "network-infrastructure-manager",
     "NETWORK_INFRASTRUCTURE_MANAGER",
-  ],
-  [
-    "humidifier-dehumidifier",
-    "HUMIDIFIER_DEHUMIDIFIER",
   ],
   [
     "occupancy-sensor",

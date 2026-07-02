@@ -117,9 +117,9 @@ SimulatingHumidifierDehumidifierDevice::~SimulatingHumidifierDehumidifierDevice(
 }
 
 CHIP_ERROR SimulatingHumidifierDehumidifierDevice::Register(EndpointId endpoint, CodeDrivenDataModelProvider & provider,
-                                                            EndpointId parentId)
+                                                            EndpointComposition composition)
 {
-    ReturnErrorOnFailure(HumidifierDehumidifierDevice::Register(endpoint, provider, parentId));
+    ReturnErrorOnFailure(HumidifierDehumidifierDevice::Register(endpoint, provider, composition));
 
     // Wire up the delegate so attribute changes call back into this class.
     HumidistatCluster().SetDelegate(this);

@@ -42,7 +42,7 @@ public:
     ~SimulatingHumidifierDehumidifierDevice() override;
 
     CHIP_ERROR Register(EndpointId endpoint, CodeDrivenDataModelProvider & provider,
-                        EndpointId parentId = kInvalidEndpointId) override;
+                        EndpointComposition composition = {}) override;
     void Unregister(CodeDrivenDataModelProvider & provider) override;
 
     // TimerContext
