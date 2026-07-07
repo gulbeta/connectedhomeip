@@ -630,6 +630,21 @@ DataModel::ActionReturnStatus HumidistatCluster::HandleSetSettings(chip::TLV::TL
         VerifyOrReturnError(requested >= mMinSetpoint && requested <= mMaxSetpoint, CHIP_IM_GLOBAL_STATUS(ConstraintError));
     }
 
+    if (commandData.continuous.HasValue() && commandData.continuous.Value() && mFeatures.Has(Feature::kContinuous))
+    {
+        VerifyOrReturnError(mAllowSetSettingsContinuous, CHIP_IM_GLOBAL_STATUS(InvalidInState));
+    }
+
+    if (commandData.sleep.HasValue() && commandData.sleep.Value() && mOptionalAttributes.IsSet(Sleep::Id))
+    {
+        VerifyOrReturnError(mAllowSetSettingsSleep, CHIP_IM_GLOBAL_STATUS(InvalidInState));
+    }
+
+    if (commandData.optimal.HasValue() && commandData.optimal.Value() && mFeatures.Has(Feature::kOptimal))
+    {
+        VerifyOrReturnError(mAllowSetSettingsOptimal, CHIP_IM_GLOBAL_STATUS(InvalidInState));
+    }
+
     if (commandData.mode.HasValue())
     {
         ReturnErrorOnFailure(SetMode(commandData.mode.Value()));

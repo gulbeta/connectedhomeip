@@ -171,6 +171,10 @@ public:
     CHIP_ERROR SetSleep(bool sleep);
     CHIP_ERROR SetOptimal(bool optimal);
 
+    void SetSetSettingsAllowContinuous(bool allow) { mAllowSetSettingsContinuous = allow; }
+    void SetSetSettingsAllowSleep(bool allow) { mAllowSetSettingsSleep = allow; }
+    void SetSetSettingsAllowOptimal(bool allow) { mAllowSetSettingsOptimal = allow; }
+
 private:
     const BitFlags<Humidistat::Feature> mFeatures;
     const OptionalAttributeSet mOptionalAttributes;
@@ -187,6 +191,9 @@ private:
     bool mContinuous;
     bool mSleep;
     bool mOptimal;
+    bool mAllowSetSettingsContinuous = true;
+    bool mAllowSetSettingsSleep      = true;
+    bool mAllowSetSettingsOptimal    = true;
     HumidistatDelegate * mDelegate = nullptr;
 
     bool IsModeSupported(Humidistat::ModeEnum mode) const;
