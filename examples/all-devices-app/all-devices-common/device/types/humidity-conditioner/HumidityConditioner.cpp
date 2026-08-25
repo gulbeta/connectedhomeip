@@ -28,7 +28,7 @@ HumidityConditioner::HumidityConditioner(TimerDelegate & timerDelegate, BitFlags
                                          HumidistatCluster::OptionalAttributeSet optionalAttributes,
                                          HumidistatCluster::StartupConfiguration humidistatConfig,
                                          RelativeHumidityMeasurementCluster::Config humidityConfig) :
-    SingleEndpoint(Span<const DataModel::DeviceTypeEntry>(&Device::Type::kHumidityConditioner, 1)),
+    SingleEndpoint(Span<const DataModel::DeviceTypeEntry>(&Device::Type::kHumidifierDehumidifier, 1)),
     mTimerDelegate(timerDelegate), mFeatures(features), mOptionalAttributes(optionalAttributes),
     mHumidistatConfig(humidistatConfig), mHumidityConfig(humidityConfig)
 {}

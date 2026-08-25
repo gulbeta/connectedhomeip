@@ -36,13 +36,14 @@ const RelativeHumidityMeasurementCluster::Config kDefaultHumidityConfig = []() {
 
 const HumidistatCluster::StartupConfiguration kDefaultHumidistatConfig = []() {
     HumidistatCluster::StartupConfiguration config;
-    config.mode           = Humidistat::ModeEnum::kAuto;
+    config.mode           = Humidistat::ModeEnum::kHumidifier;
     config.systemState    = Humidistat::SystemStateEnum::kIdle;
     config.userSetpoint   = 45;
     config.minSetpoint    = 20;
     config.maxSetpoint    = 80;
     config.step           = 5;
     config.targetSetpoint = 45;
+    config.mistType.SetNonNull(chip::BitMask<Humidistat::MistTypeBitmap>(Humidistat::MistTypeBitmap::kMistCold));
     return config;
 }();
 
